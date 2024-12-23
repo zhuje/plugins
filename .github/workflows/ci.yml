@@ -57,7 +57,7 @@ jobs:
           enable_go: true
       - uses: ./.github/perses-ci/actions/install_percli
         with:
-          cli_version: "main-2024-11-13-e99df92a-distroless" # To replace by latest when `percli plugin update` command will be released
+          cli_version: "v0.50.0-rc.0"
       - run: go run ./scripts/get-schemas-deps/get-schemas-deps.go
       - name: store plugin schema dependencies
         uses: actions/upload-artifact@v4
