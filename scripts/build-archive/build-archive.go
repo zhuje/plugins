@@ -22,14 +22,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var pluginFiles = []string{
+	"dist/",
+	"cue.mod/",
+	"schemas/",
+	"package.json",
+	"README.md",
+}
+
 func createArchive(pluginName string) error {
 	manifest, err := npm.ReadManifest(pluginName)
 	if err != nil {
 		return err
 	}
 	newArchiveFolder := path.Join(pluginName, pluginName)
-	if execErr := exec.Command("cp", "-r", path.Join(pluginName, "dist/"), newArchiveFolder).Run(); execErr != nil {
-		return fmt.Errorf("unable to copy the dist folder: %w", execErr)
+	for _, f := range pluginFiles {
+		if execErr := exec.Command("cp", "-r", path.Join(pluginName, f), newArchiveFolder).Run(); execErr != nil {
+			return fmt.Errorf("unable to copy the file or folder %s: %w", f, execErr)
+		}
 	}
 
 	// Then let's create the archive with the folder previously created
