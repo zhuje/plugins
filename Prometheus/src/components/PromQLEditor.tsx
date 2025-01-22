@@ -112,6 +112,7 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
               onClick={handleShowTreeView}
               sx={{ position: 'absolute', right: '5px', top: '5px' }}
               size="small"
+              key="tree-view-button"
             >
               <FileTreeIcon sx={{ fontSize: '18px' }} />
             </IconButton>
@@ -124,6 +125,7 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
                   onClick={() => setTreeViewVisible(false)}
                   sx={{ position: 'absolute', top: '5px', right: '5px' }}
                   size="small"
+                  key="tree-view-close-button"
                 >
                   <CloseIcon sx={{ fontSize: '18px' }} />
                 </IconButton>
