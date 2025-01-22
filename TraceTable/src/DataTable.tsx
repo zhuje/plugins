@@ -158,7 +158,9 @@ export function DataTable(props: DataTableProps): ReactElement {
         display: 'flex',
         renderCell: ({ row }) => (
           <Tooltip title={UTC_DATE_FORMATTER(new Date(row.startTimeUnixMs))} placement="top" arrow>
-            <Typography display="inline">{DATE_FORMATTER(new Date(row.startTimeUnixMs))}</Typography>
+            <Typography display="inline" key={`st-${row.traceId}`}>
+              {DATE_FORMATTER(new Date(row.startTimeUnixMs))}
+            </Typography>
           </Tooltip>
         ),
       },

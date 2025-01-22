@@ -225,7 +225,7 @@ export function CellEditor({ cell, onChange, onDelete, ...props }: CellEditorPro
       </Grid>
       <Grid size={{ xs: 1 }} textAlign="end">
         <Tooltip title="Remove cell settings" placement="top">
-          <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={onDelete}>
+          <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={onDelete} key="delete-cell-button">
             <DeleteIcon />
           </IconButton>
         </Tooltip>

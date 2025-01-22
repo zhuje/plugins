@@ -76,7 +76,7 @@ export function ColumnEditorContainer({
           {isCollapsed && (
             <>
               <Tooltip title={column.hide ? 'Show column' : 'Hide column'} placement="top">
-                <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={handleHideColumn}>
+                <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={handleHideColumn} key="hide-column">
                   {column.hide ? <EyeOffIcon /> : <EyeIcon />}
                 </IconButton>
               </Tooltip>
@@ -84,7 +84,7 @@ export function ColumnEditorContainer({
             </>
           )}
           <Tooltip title="Remove column settings" placement="top">
-            <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={onDelete}>
+            <IconButton size="small" sx={{ marginLeft: 'auto' }} onClick={onDelete} key="delete-column-button">
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -95,6 +95,7 @@ export function ColumnEditorContainer({
               menuSx={{
                 '.MuiPaper-root': { backgroundColor: (theme) => theme.palette.background.lighter },
               }}
+              key="reorder-column-button"
             />
           </Tooltip>
         </Stack>
