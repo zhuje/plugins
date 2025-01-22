@@ -21,6 +21,7 @@
     "StaticListVariable",
     "StatusHistoryChart",
     "Table",
+    "Tempo",
     "TimeSeriesChart",
     "TimeSeriesTable",
     "TraceTable",
