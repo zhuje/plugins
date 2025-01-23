@@ -1,7 +1,7 @@
 {
   "name": "@perses-dev/timeseries-chart",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "dev": "rsbuild dev",
     "build": "rsbuild build",
