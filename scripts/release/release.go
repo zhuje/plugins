@@ -61,7 +61,9 @@ func main() {
 		logrus.WithError(err).Fatal("unable to fetch the tags")
 	}
 	if !*releaseAll {
+		logrus.Infof("releasing %s", *releaseSingleName)
 		release(*releaseSingleName, *optionalReleaseMessage)
+		return
 	}
 	workspaces, err := npm.GetWorkspaces()
 	if err != nil {
