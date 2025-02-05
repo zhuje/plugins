@@ -11,34 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package stat
 
 import (
 	"github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 )
 
-const PluginKind = "BarChart"
+const PluginKind = "StatChart"
 
-type Sort string
-
-const (
-	AscSort  Sort = "asc"
-	DescSort Sort = "desc"
-)
-
-type Mode string
-
-const (
-	ValueMode      Mode = "value"
-	PercentageMode Mode = "percentage"
-)
+type Sparkline struct {
+	Color string  `json:"color,omitempty" yaml:"color,omitempty"`
+	Width float64 `json:"width,omitempty" yaml:"width,omitempty"`
+}
 
 type PluginSpec struct {
-	Calculation common.Calculation `json:"calculation" yaml:"calculation"`
-	Format      *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
-	Sort        Sort               `json:"sort,omitempty" yaml:"sort,omitempty"`
-	Mode        Mode               `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Calculation   common.Calculation `json:"calculation" yaml:"calculation"`
+	Format        *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
+	Thresholds    *common.Thresholds `json:"thresholds,omitempty" yaml:"thresholds,omitempty"`
+	Sparkline     *Sparkline         `json:"sparkline,omitempty" yaml:"sparkline,omitempty"`
+	ValueFontSize int                `json:"valueFontSize,omitempty" yaml:"valueFontSize,omitempty"`
 }
 
 type Option func(plugin *Builder) error

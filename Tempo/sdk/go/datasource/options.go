@@ -11,36 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package datasource
 
 import (
-	"github.com/perses/perses/go-sdk/common"
+	"github.com/perses/perses/go-sdk/http"
 )
 
-func Calculation(calculation common.Calculation) Option {
+func DirectURL(url string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.DirectURL = url
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func HTTPProxy(url string, options ...http.Option) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
-		return nil
-	}
-}
-
-func SortingBy(sort Sort) Option {
-	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+		p, err := http.New(url, options...)
+		if err != nil {
+			return err
+		}
+		builder.Proxy = &p.Proxy
 		return nil
 	}
 }

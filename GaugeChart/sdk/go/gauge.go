@@ -11,34 +11,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package gauge
 
 import (
 	"github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 )
 
-const PluginKind = "BarChart"
-
-type Sort string
-
-const (
-	AscSort  Sort = "asc"
-	DescSort Sort = "desc"
-)
-
-type Mode string
-
-const (
-	ValueMode      Mode = "value"
-	PercentageMode Mode = "percentage"
-)
+const PluginKind = "GaugeChart"
 
 type PluginSpec struct {
 	Calculation common.Calculation `json:"calculation" yaml:"calculation"`
 	Format      *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
-	Sort        Sort               `json:"sort,omitempty" yaml:"sort,omitempty"`
-	Mode        Mode               `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Thresholds  *common.Thresholds `json:"thresholds,omitempty" yaml:"thresholds,omitempty"`
+	Max         float64            `json:"max,omitempty" yaml:"max,omitempty"`
 }
 
 type Option func(plugin *Builder) error

@@ -1,4 +1,4 @@
-// Copyright 2024 The Perses Authors
+// Copyright 2025 The Perses Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,34 +11,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package statushistory
 
 import (
-	"github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 )
 
-const PluginKind = "BarChart"
+const PluginKind = "StatusHistoryChart"
 
-type Sort string
-
-const (
-	AscSort  Sort = "asc"
-	DescSort Sort = "desc"
-)
-
-type Mode string
+type LegendPosition string
 
 const (
-	ValueMode      Mode = "value"
-	PercentageMode Mode = "percentage"
+	BottomPosition LegendPosition = "bottom"
+	RightPosition  LegendPosition = "right"
 )
+
+type LegendMode string
+
+const (
+	ListMode  LegendMode = "list"
+	TableMode LegendMode = "table"
+)
+
+type LegendSize string
+
+const (
+	SmallSize  LegendSize = "small"
+	MediumSize LegendSize = "medium"
+)
+
+type Legend struct {
+	Position LegendPosition `json:"position" yaml:"position"`
+	Mode     LegendMode     `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Size     LegendSize     `json:"size,omitempty" yaml:"size,omitempty"`
+}
 
 type PluginSpec struct {
-	Calculation common.Calculation `json:"calculation" yaml:"calculation"`
-	Format      *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
-	Sort        Sort               `json:"sort,omitempty" yaml:"sort,omitempty"`
-	Mode        Mode               `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Legend *Legend `json:"legend,omitempty" yaml:"legend,omitempty"`
+	// TODO missing mappings
 }
 
 type Option func(plugin *Builder) error
@@ -52,11 +62,7 @@ func create(options ...Option) (Builder, error) {
 		PluginSpec: PluginSpec{},
 	}
 
-	defaults := []Option{
-		Calculation(common.LastCalculation),
-	}
-
-	for _, opt := range append(defaults, options...) {
+	for _, opt := range options {
 		if err := opt(builder); err != nil {
 			return *builder, err
 		}

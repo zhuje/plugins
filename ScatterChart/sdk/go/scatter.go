@@ -11,36 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package scatter
 
-import (
-	"github.com/perses/perses/go-sdk/common"
-)
+import "github.com/perses/perses/go-sdk/panel"
 
-func Calculation(calculation common.Calculation) Option {
-	return func(builder *Builder) error {
-		builder.Calculation = calculation
-		return nil
-	}
-}
+const PluginKind = "ScatterChart"
 
-func Format(format common.Format) Option {
-	return func(builder *Builder) error {
-		builder.Format = &format
-		return nil
-	}
-}
-
-func SortingBy(sort Sort) Option {
-	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+func Chart() panel.Option {
+	return func(builder *panel.Builder) error {
+		builder.Spec.Plugin.Kind = PluginKind
 		return nil
 	}
 }

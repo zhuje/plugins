@@ -11,36 +11,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package labelvalues
 
 import (
-	"github.com/perses/perses/go-sdk/common"
+	promDatasource "github.com/perses/perses/go-sdk/prometheus/datasource"
+	v1 "github.com/perses/perses/pkg/model/api/v1"
 )
 
-func Calculation(calculation common.Calculation) Option {
+func LabelName(labelName string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.PluginSpec.LabelName = labelName
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func Datasource(datasourceName string) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
+		builder.PluginSpec.Datasource = promDatasource.Selector(datasourceName)
 		return nil
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func Matchers(matchers ...string) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
+		builder.PluginSpec.Matchers = matchers
 		return nil
 	}
 }
 
-func WithMode(mode Mode) Option {
+func AddMatchers(matcher string) Option {
 	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.PluginSpec.Matchers = append(builder.PluginSpec.Matchers, matcher)
+		return nil
+	}
+}
+
+func Filter(variables ...v1.Variable) Option {
+	return func(builder *Builder) error {
+		builder.Filters = variables
 		return nil
 	}
 }

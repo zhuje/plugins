@@ -11,36 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package staticlist
 
-import (
-	"github.com/perses/perses/go-sdk/common"
-)
-
-func Calculation(calculation common.Calculation) Option {
+func Values(values ...string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.Values = values
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func AddValue(value string) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
-		return nil
-	}
-}
-
-func SortingBy(sort Sort) Option {
-	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Values = append(builder.Values, value)
 		return nil
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2024 The Perses Authors
+// Copyright 2025 The Perses Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,36 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package statushistory
 
-import (
-	"github.com/perses/perses/go-sdk/common"
-)
-
-func Calculation(calculation common.Calculation) Option {
+func WithLegend(legend Legend) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
-		return nil
-	}
-}
-
-func Format(format common.Format) Option {
-	return func(builder *Builder) error {
-		builder.Format = &format
-		return nil
-	}
-}
-
-func SortingBy(sort Sort) Option {
-	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Legend = &legend
 		return nil
 	}
 }

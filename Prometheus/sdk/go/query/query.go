@@ -11,49 +11,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package query
 
 import (
-	"github.com/perses/perses/go-sdk/common"
-	"github.com/perses/perses/go-sdk/panel"
+	"github.com/perses/perses/go-sdk/datasource"
+	"github.com/perses/perses/go-sdk/query"
+	"github.com/perses/perses/pkg/model/api/v1/common"
 )
 
-const PluginKind = "BarChart"
-
-type Sort string
-
-const (
-	AscSort  Sort = "asc"
-	DescSort Sort = "desc"
-)
-
-type Mode string
-
-const (
-	ValueMode      Mode = "value"
-	PercentageMode Mode = "percentage"
-)
+const PluginKind = "PrometheusTimeSeriesQuery"
 
 type PluginSpec struct {
-	Calculation common.Calculation `json:"calculation" yaml:"calculation"`
-	Format      *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
-	Sort        Sort               `json:"sort,omitempty" yaml:"sort,omitempty"`
-	Mode        Mode               `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Datasource       *datasource.Selector `json:"datasource,omitempty" yaml:"datasource,omitempty"`
+	Query            string               `json:"query" yaml:"query"`
+	SeriesNameFormat string               `json:"seriesNameFormat,omitempty" yaml:"seriesNameFormat,omitempty"`
+	MinStep          common.Duration      `json:"minStep,omitempty" yaml:"minStep,omitempty"`
+	Resolution       int                  `json:"resolution,omitempty" yaml:"resolution,omitempty"`
 }
 
 type Option func(plugin *Builder) error
 
-type Builder struct {
-	PluginSpec `json:",inline" yaml:",inline"`
-}
-
-func create(options ...Option) (Builder, error) {
+func create(query string, options ...Option) (Builder, error) {
 	builder := &Builder{
 		PluginSpec: PluginSpec{},
 	}
 
 	defaults := []Option{
-		Calculation(common.LastCalculation),
+		Expr(query),
 	}
 
 	for _, opt := range append(defaults, options...) {
@@ -65,14 +49,19 @@ func create(options ...Option) (Builder, error) {
 	return *builder, nil
 }
 
-func Chart(options ...Option) panel.Option {
-	return func(builder *panel.Builder) error {
-		r, err := create(options...)
+type Builder struct {
+	PluginSpec `json:",inline" yaml:",inline"`
+}
+
+func PromQL(expr string, options ...Option) query.Option {
+	return func(builder *query.Builder) error {
+		plugin, err := create(expr, options...)
 		if err != nil {
 			return err
 		}
+
 		builder.Spec.Plugin.Kind = PluginKind
-		builder.Spec.Plugin.Spec = r.PluginSpec
+		builder.Spec.Plugin.Spec = plugin
 		return nil
 	}
 }

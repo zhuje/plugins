@@ -11,36 +11,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package timeseries
 
-import (
-	"github.com/perses/perses/go-sdk/common"
-)
+import "github.com/perses/perses/go-sdk/common"
 
-func Calculation(calculation common.Calculation) Option {
+func WithLegend(legend Legend) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.Legend = &legend
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func WithTooltip(tooltip Tooltip) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
+		builder.Tooltip = &tooltip
 		return nil
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func WithYAxis(axis YAxis) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
+		builder.YAxis = &axis
 		return nil
 	}
 }
 
-func WithMode(mode Mode) Option {
+func Thresholds(thresholds common.Thresholds) Option {
 	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Thresholds = &thresholds
+		return nil
+	}
+}
+
+func WithVisual(visual Visual) Option {
+	return func(builder *Builder) error {
+		builder.Visual = &visual
+		return nil
+	}
+}
+
+func WithQuerySettings(querySettingsList []QuerySettingsItem) Option {
+	return func(builder *Builder) error {
+		builder.QuerySettings = &querySettingsList
 		return nil
 	}
 }

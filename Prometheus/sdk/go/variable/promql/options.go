@@ -11,36 +11,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package promql
 
 import (
-	"github.com/perses/perses/go-sdk/common"
+	promDatasource "github.com/perses/perses/go-sdk/prometheus/datasource"
 )
 
-func Calculation(calculation common.Calculation) Option {
+func Expr(expr string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.PluginSpec.Expr = expr
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func LabelName(labelName string) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
+		builder.PluginSpec.LabelName = labelName
 		return nil
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func Datasource(datasourceName string) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.PluginSpec.Datasource = promDatasource.Selector(datasourceName)
 		return nil
 	}
 }

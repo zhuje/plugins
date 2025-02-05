@@ -11,36 +11,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package query
 
-import (
-	"github.com/perses/perses/go-sdk/common"
-)
+import "github.com/perses/perses/go-sdk/tempo/datasource"
 
-func Calculation(calculation common.Calculation) Option {
+func Expr(expr string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.Query = expr
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func Datasource(datasourceName string) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
-		return nil
-	}
-}
-
-func SortingBy(sort Sort) Option {
-	return func(builder *Builder) error {
-		builder.Sort = sort
-		return nil
-	}
-}
-
-func WithMode(mode Mode) Option {
-	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Datasource = datasource.Selector(datasourceName)
 		return nil
 	}
 }

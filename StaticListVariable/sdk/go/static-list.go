@@ -11,50 +11,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package staticlist
 
 import (
-	"github.com/perses/perses/go-sdk/common"
-	"github.com/perses/perses/go-sdk/panel"
-)
-
-const PluginKind = "BarChart"
-
-type Sort string
-
-const (
-	AscSort  Sort = "asc"
-	DescSort Sort = "desc"
-)
-
-type Mode string
-
-const (
-	ValueMode      Mode = "value"
-	PercentageMode Mode = "percentage"
+	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
 type PluginSpec struct {
-	Calculation common.Calculation `json:"calculation" yaml:"calculation"`
-	Format      *common.Format     `json:"format,omitempty" yaml:"format,omitempty"`
-	Sort        Sort               `json:"sort,omitempty" yaml:"sort,omitempty"`
-	Mode        Mode               `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Values []string `json:"values" yaml:"values"`
 }
 
 type Option func(plugin *Builder) error
 
 type Builder struct {
-	PluginSpec `json:",inline" yaml:",inline"`
+	PluginSpec
 }
 
 func create(options ...Option) (Builder, error) {
-	builder := &Builder{
+	var builder = &Builder{
 		PluginSpec: PluginSpec{},
 	}
 
-	defaults := []Option{
-		Calculation(common.LastCalculation),
-	}
+	var defaults []Option
 
 	for _, opt := range append(defaults, options...) {
 		if err := opt(builder); err != nil {
@@ -65,14 +43,14 @@ func create(options ...Option) (Builder, error) {
 	return *builder, nil
 }
 
-func Chart(options ...Option) panel.Option {
-	return func(builder *panel.Builder) error {
-		r, err := create(options...)
+func StaticList(options ...Option) listvariable.Option {
+	return func(builder *listvariable.Builder) error {
+		t, err := create(options...)
 		if err != nil {
 			return err
 		}
-		builder.Spec.Plugin.Kind = PluginKind
-		builder.Spec.Plugin.Spec = r.PluginSpec
+		builder.ListVariableSpec.Plugin.Kind = "StaticListVariable"
+		builder.ListVariableSpec.Plugin.Spec = t
 		return nil
 	}
 }

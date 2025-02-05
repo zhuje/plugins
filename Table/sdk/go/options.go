@@ -11,36 +11,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package table
 
 import (
 	"github.com/perses/perses/go-sdk/common"
 )
 
-func Calculation(calculation common.Calculation) Option {
+func WithDensity(density Density) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.Density = density
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func WithColumnSettings(settings []ColumnSettings) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
+		builder.ColumnSettings = settings
 		return nil
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func WithCellSettings(settings []CellSettings) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
+		builder.CellSettings = settings
 		return nil
 	}
 }
 
-func WithMode(mode Mode) Option {
+func Transform(transforms []common.Transform) Option {
 	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Transforms = transforms
 		return nil
 	}
 }

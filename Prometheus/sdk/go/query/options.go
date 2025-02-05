@@ -11,36 +11,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package query
 
 import (
-	"github.com/perses/perses/go-sdk/common"
+	"time"
+
+	promDatasource "github.com/perses/perses/go-sdk/prometheus/datasource"
+	"github.com/perses/perses/pkg/model/api/v1/common"
 )
 
-func Calculation(calculation common.Calculation) Option {
+func Expr(expr string) Option {
 	return func(builder *Builder) error {
-		builder.Calculation = calculation
+		builder.Query = expr
 		return nil
 	}
 }
 
-func Format(format common.Format) Option {
+func Datasource(datasourceName string) Option {
 	return func(builder *Builder) error {
-		builder.Format = &format
+		builder.Datasource = promDatasource.Selector(datasourceName)
 		return nil
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func SeriesNameFormat(format string) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
+		builder.SeriesNameFormat = format
 		return nil
 	}
 }
 
-func WithMode(mode Mode) Option {
+func MinStep(step time.Duration) Option {
 	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.MinStep = common.Duration(step)
+		return nil
+	}
+}
+
+func Resolution(resolution int) Option {
+	return func(builder *Builder) error {
+		builder.Resolution = resolution
 		return nil
 	}
 }

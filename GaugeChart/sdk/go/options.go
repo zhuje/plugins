@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bar
+package gauge
 
 import (
 	"github.com/perses/perses/go-sdk/common"
@@ -31,16 +31,16 @@ func Format(format common.Format) Option {
 	}
 }
 
-func SortingBy(sort Sort) Option {
+func Thresholds(thresholds common.Thresholds) Option {
 	return func(builder *Builder) error {
-		builder.Sort = sort
+		builder.Thresholds = &thresholds
 		return nil
 	}
 }
 
-func WithMode(mode Mode) Option {
+func Max(max float64) Option { // nolint: revive
 	return func(builder *Builder) error {
-		builder.Mode = mode
+		builder.Max = max
 		return nil
 	}
 }
