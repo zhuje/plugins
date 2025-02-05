@@ -84,6 +84,19 @@ jobs:
       - run: npm ci
       - run: npm run test
 
+  type-check:
+    name: 'type-check'
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: perses/github-actions@v0.8.0
+      - uses: ./.github/perses-ci/actions/setup_environment
+        with:
+          enable_npm: true
+      - run: npm ci
+      - run: npm run type-check
+
   validate-schemas:
     name: 'Validate plugin schemas'
     needs: 'get-schemas-deps'
