@@ -1,4 +1,4 @@
-// Copyright 2024 The Perses Authors
+// Copyright 2025 The Perses Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -76,6 +76,8 @@ export const getNodeChildren = (node: ASTNode): ASTNode[] => {
       throw new Error('unsupported node type');
   }
 };
+
+export const aggregatorsWithParam = ['topk', 'bottomk', 'quantile', 'count_values', 'limitk', 'limit_ratio'];
 
 export const escapeString = (str: string): string => {
   return str.replace(/([\\"])/g, '\\$1');

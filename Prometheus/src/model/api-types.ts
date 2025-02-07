@@ -1,4 +1,4 @@
-// Copyright 2023 The Perses Authors
+// Copyright 2025 The Perses Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -62,13 +62,25 @@ export interface ScalarData {
   result: ValueTuple;
 }
 
+export interface StringData {
+  resultType: 'string';
+  result: ValueTuple;
+}
+
 export interface InstantQueryRequestParameters {
   query: string;
   time?: UnixTimestampSeconds;
   timeout?: DurationString;
 }
 
-export type InstantQueryResponse = ApiResponse<MatrixData | VectorData | ScalarData>;
+export type InstantQueryResultType = MatrixData | VectorData | ScalarData | StringData;
+
+// Ref https://prometheus.io/docs/prometheus/latest/querying/api/#instant-queries
+export type InstantQueryResponse = ApiResponse<InstantQueryResultType>;
+
+export type MonitoredInstantQueryResponse = InstantQueryResponse & {
+  responseTime: number;
+};
 
 export interface RangeQueryRequestParameters {
   query: string;

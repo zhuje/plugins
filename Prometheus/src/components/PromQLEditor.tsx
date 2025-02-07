@@ -1,4 +1,4 @@
-// Copyright 2024 The Perses Authors
+// Copyright 2025 The Perses Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,20 +22,12 @@ import CloseIcon from 'mdi-material-ui/Close';
 import { useReplaceVariablesInString } from '@perses-dev/plugin-system';
 import { PrometheusDatasourceSelector } from '../model';
 import { replacePromBuiltinVariables } from '../plugins/prometheus-time-series-query/replace-prom-builtin-variables';
-import { useParseQuery } from './parse';
+import { useParseQuery } from './query';
 import TreeNode from './TreeNode';
 
 const treeViewStr = 'Tree View';
 const treeViewOpenStr = 'Open ' + treeViewStr;
 const treeViewCloseStr = 'Close ' + treeViewStr;
-
-function getErrMessage(error: unknown): string {
-  let errorMessage = 'An unknown error occurred';
-  if (error && error instanceof Error) {
-    errorMessage = error.message.trim();
-  }
-  return errorMessage;
-}
 
 export type PromQLEditorProps = {
   completeConfig: CompleteConfiguration;
@@ -61,7 +53,6 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
   }
 
   const { data: parseQueryResponse, isLoading, error } = useParseQuery(queryExpr ?? '', datasource, isTreeViewVisible);
-  const errorMessage = useMemo(() => getErrMessage(error), [error]);
 
   const handleShowTreeView = (): void => {
     setTreeViewVisible(!isTreeViewVisible);
@@ -112,7 +103,6 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
               onClick={handleShowTreeView}
               sx={{ position: 'absolute', right: '5px', top: '5px' }}
               size="small"
-              key="tree-view-button"
             >
               <FileTreeIcon sx={{ fontSize: '18px' }} />
             </IconButton>
@@ -125,7 +115,6 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
                   onClick={() => setTreeViewVisible(false)}
                   sx={{ position: 'absolute', top: '5px', right: '5px' }}
                   size="small"
-                  key="tree-view-close-button"
                 >
                   <CloseIcon sx={{ fontSize: '18px' }} />
                 </IconButton>
@@ -135,7 +124,7 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
                 <ErrorAlert
                   error={{
                     name: `${treeViewStr} not available`,
-                    message: errorMessage,
+                    message: error.message,
                   }}
                 />
               ) : (
@@ -149,7 +138,7 @@ export function PromQLEditor({ completeConfig, datasource, ...rest }: PromQLEdit
                   {isLoading ? (
                     <CircularProgress />
                   ) : parseQueryResponse?.data ? (
-                    <TreeNode node={parseQueryResponse.data} reverse={false} />
+                    <TreeNode node={parseQueryResponse.data} reverse={false} childIdx={0} datasource={datasource} />
                   ) : null}
                 </div>
               )}
