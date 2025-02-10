@@ -15,9 +15,9 @@ The instructions are for the `Table` plugin, replace the name accordingly.
 1. Start development server of the plugin: `cd Table; npm run dev`
 2. Update the Perses configuration `config.yaml` to use development server for this plugin:
    ```yaml
-   plugins:
+   plugin:
      dev_environment:
-       plugin:
+       plugins:
          - name: Table
            disable_schema: false
            url: http://localhost:3005
