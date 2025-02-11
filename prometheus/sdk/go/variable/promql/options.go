@@ -14,7 +14,7 @@
 package promql
 
 import (
-	promDatasource "github.com/perses/perses/go-sdk/prometheus/datasource"
+	promDatasource "github.com/perses/plugins/prometheus/sdk/go/datasource"
 )
 
 func Expr(expr string) Option {

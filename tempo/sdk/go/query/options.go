@@ -13,7 +13,7 @@
 
 package query
 
-import "github.com/perses/perses/go-sdk/tempo/datasource"
+import "github.com/perses/plugins/tempo/sdk/go/datasource"
 
 func Expr(expr string) Option {
 	return func(builder *Builder) error {

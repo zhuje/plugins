@@ -14,8 +14,8 @@
 package labelvalues
 
 import (
-	promDatasource "github.com/perses/perses/go-sdk/prometheus/datasource"
 	v1 "github.com/perses/perses/pkg/model/api/v1"
+	promDatasource "github.com/perses/plugins/prometheus/sdk/go/datasource"
 )
 
 func LabelName(labelName string) Option {
