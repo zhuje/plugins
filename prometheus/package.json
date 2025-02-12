@@ -1,7 +1,7 @@
 {
   "name": "@perses-dev/prometheus",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "scripts": {
     "dev": "rsbuild dev",
     "build": "rsbuild build",
@@ -12,10 +12,10 @@
   "dependencies": {
     "@module-federation/enhanced": "^0.8.9",
     "@nexucis/fuzzy": "^0.5.1",
-    "@prometheus-io/codemirror-promql": "^0.301.0",
+    "@perses-dev/explore": "0.0.0-snapshot-explorer-plugin-c4a7621",
+    "@prometheus-io/codemirror-promql": "^0.45.6",
     "color-hash": "^2.0.2",
-    "qs": "^6.13.0",
-    "@perses-dev/explore": "0.0.0-snapshot-explorer-plugin-c4a7621"
+    "qs": "^6.13.0"
   },
   "peerDependencies": {
     "@emotion/react": "^11.7.1",
