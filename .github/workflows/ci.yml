@@ -84,10 +84,6 @@ jobs:
           enable_go: true
           cue_version: 'v0.11.0'
           enable_cue: true
-      - name: retrieve plugin schema dependencies
-        uses: actions/download-artifact@v4
-        with:
-          name: plugins-schema-deps
       - run: go run ./scripts/validate-schemas/validate-schemas.go
 
   release:
