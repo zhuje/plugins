@@ -14,9 +14,9 @@
 package promql
 
 import (
-	promQLVar "github.com/perses/perses/cue/schemas/variables/prometheus-promql:model"
-	promVarBuilder "github.com/perses/perses/cue/dac-utils/prometheus/variable"
-	filterBuilder "github.com/perses/perses/cue/dac-utils/prometheus/filter"
+	promQLVar "github.com/perses/plugins/prometheus/schemas/prometheus-promql:model"
+	promVarBuilder "github.com/perses/plugins/prometheus/sdk/cue/variable"
+	filterBuilder "github.com/perses/plugins/prometheus/sdk/cue/filter"
 )
 
 // include the definitions of promVarBuilder at the root

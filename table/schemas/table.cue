@@ -15,7 +15,7 @@ package model
 
 import (
 	"strings"
-	"github.com/perses/perses/cue/common"
+	"github.com/perses/perses/cuelang/common"
 )
 
 kind: "Table"

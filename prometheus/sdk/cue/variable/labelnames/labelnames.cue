@@ -14,9 +14,9 @@
 package labelnames
 
 import (
-	labelNamesVar "github.com/perses/perses/cue/schemas/variables/prometheus-label-names:model"
-	promVarBuilder "github.com/perses/perses/cue/dac-utils/prometheus/variable"
-	filterBuilder "github.com/perses/perses/cue/dac-utils/prometheus/filter"
+	labelNamesVar "github.com/perses/plugins/prometheus/schemas/prometheus-label-names:model"
+	promVarBuilder "github.com/perses/plugins/prometheus/sdk/cue/variable"
+	filterBuilder "github.com/perses/plugins/prometheus/sdk/cue/filter"
 )
 
 // include the definitions of promVarBuilder at the root

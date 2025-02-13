@@ -1,13 +1,13 @@
 module: "github.com/perses/plugins/tempo@v0"
 language: {
-	version: "v0.11.0"
+	version: "v0.12.0"
 }
 source: {
 	kind: "git"
 }
 deps: {
-	"github.com/perses/perses/cue@v0": {
-		v:       "v0.0.1-test"
+	"github.com/perses/perses/cuelang@v0": {
+		v:       "v0.0.0-test"
 		default: true
 	}
 }
