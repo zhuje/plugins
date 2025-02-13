@@ -42,7 +42,7 @@ func main() {
 		logrus.WithError(err).Fatalf("unable to read manifest file for plugin %s", pluginFolderName)
 	}
 	pluginName := manifest.Name
-	if execErr := exec.Command("gh", "release", "upload", *tag, filepath.Join(pluginName, fmt.Sprintf("%s-%s.tar.gz", pluginName, version))).Run(); execErr != nil {
+	if execErr := exec.Command("gh", "release", "upload", *tag, filepath.Join(pluginFolderName, fmt.Sprintf("%s-%s.tar.gz", pluginName, version))).Run(); execErr != nil {
 		logrus.WithError(execErr).Fatalf("unable to upload archive %s", pluginName)
 	}
 }
