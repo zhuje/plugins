@@ -6,7 +6,7 @@ source: {
 	kind: "git"
 }
 deps: {
-	"github.com/perses/perses@v0": {
+	"github.com/perses/perses/cue@v0": {
 		v:       "v0.0.1-test"
 		default: true
 	}
