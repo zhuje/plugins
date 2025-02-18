@@ -20,7 +20,7 @@ export default defineConfig({
     port: 3005,
   },
   dev: {
-    assetPrefix: '/plugins-dev/BarChart/',
+    assetPrefix: '/plugins/BarChart/',
   },
   output: {
     assetPrefix: '/plugins/BarChart/',
