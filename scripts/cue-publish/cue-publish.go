@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"regexp"
 
+	"github.com/perses/plugins/scripts/tag"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,26 +28,18 @@ func runCommand(name string, args ...string) error {
 }
 
 func main() {
-	tagNamePattern := regexp.MustCompile(`(?m)(.+)\/(v\d+\.\d+\.\d+(?:-[\w\d]+)?)`)
-
 	token := flag.String("token", "", "Authentication token for CUE Central Registry login")
-	tag := flag.String("tag", "", "Name of the tag")
+	t := tag.Flag()
 	flag.Parse()
 
 	if *token == "" {
 		logrus.Fatal("Error: -token flag is required")
 	}
-	if *tag == "" {
+	if *t == "" {
 		logrus.Fatal("Error: -tag flag is required")
 	}
 
-	logrus.Info("Parsing the provided tag...")
-	tagSplitted := tagNamePattern.FindStringSubmatch(*tag)
-	if len(tagSplitted) != 3 {
-		logrus.Fatalf("Invalid tag name: %s", *tag)
-	}
-	pluginName := tagSplitted[1]
-	version := tagSplitted[2]
+	pluginName, version := tag.Parse(t)
 	module := fmt.Sprintf("%s/%s@%s", modulePrefix, pluginName, version)
 
 	logrus.Infof("Module to be released: %s", module)
