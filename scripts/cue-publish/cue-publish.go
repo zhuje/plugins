@@ -40,6 +40,7 @@ func main() {
 	}
 
 	pluginName, version := tag.Parse(t)
+	version = "v" + version
 	module := fmt.Sprintf("%s/%s@%s", modulePrefix, pluginName, version)
 
 	logrus.Infof("Module to be released: %s", module)
