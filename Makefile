@@ -12,12 +12,13 @@
 # limitations under the License.
 
 GO ?= go
+
 .PHONY: schemas-validate
 validate-schemas:
 	@echo ">> Validate schemas for all plugins"
-	$(GO) run ./scripts/schemas/validate/validate-schemas.go
+	$(GO) run ./scripts/validate-schemas/validate-schemas.go
 
-.PHONY: update-schemas-dep
-update-schemas-dep:
-	@echo ">> Update perses/perses dependency for all plugins"
-	$(GO) run ./scripts/schemas/update-dep/update-schemas-dep.go
+.PHONY: tidy-modules
+tidy-modules:
+	@echo ">> Tidy CUE module for all plugins"
+	$(GO) run ./scripts/tidy-modules/tidy-modules.go
