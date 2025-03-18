@@ -12,6 +12,7 @@
 # limitations under the License.
 
 GO ?= go
+MDOX ?= mdox
 
 .PHONY: schemas-validate
 validate-schemas:
@@ -22,3 +23,14 @@ validate-schemas:
 tidy-modules:
 	@echo ">> Tidy CUE module for all plugins"
 	$(GO) run ./scripts/tidy-modules/tidy-modules.go
+
+.PHONY: checkdocs
+checkdocs:
+	@echo ">> check format markdown docs"
+	@make fmt-docs
+	@git diff --exit-code -- *.md
+
+.PHONY: fmt-docs
+fmt-docs:
+	@echo ">> format markdown document"
+	$(MDOX) fmt --soft-wraps -l $$(find . -name '*.md' -print) --links.validate.config-file=./.mdox.validate.yaml

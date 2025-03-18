@@ -18,7 +18,7 @@ panelBuilder & {} // input parameters expected
 
 | Parameter       | Type                                                       | Mandatory/Optional | Default | Description                                                |
 |-----------------|------------------------------------------------------------|--------------------|---------|------------------------------------------------------------|
-| `spec`          | [PanelSpec](../../../api/dashboard.md#panel-specification) | Mandatory          |         | A PanelSpec object                                         |
+| `spec`          | [PanelSpec](https://perses.dev/perses/docs/api/dashboard/#panel-specification) | Mandatory          |         | A PanelSpec object                                         |
 | `#clause`       | `"by"` \| `"without"` \| `""`                              | Optional           | `""`    | The aggregation clause for this panel's queries.           |
 | `#clauseLabels` | [...string]                                                | Optional           | []      | The labels on which to aggregate for this panel's queries. |
 
