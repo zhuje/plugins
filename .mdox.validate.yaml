@@ -5,5 +5,5 @@ timeout: '1m'
 validators:
   - regex: 'github\.com'
     type: 'ignore'
-  - regex: 'perses.dev'
+  - regex: 'perses\.dev'
     type: 'ignore'
