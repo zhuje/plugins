@@ -18,7 +18,7 @@ spec:
 
 ### HTTP Proxy specification
 
-See [common plugin definitions](https://github.com/perses/perses/blob/main/docs/plugins/common.md#http-proxy-specification).
+See [common plugin definitions](https://perses.dev/perses/docs/plugins/common/#http-proxy-specification).
 
 ## Query
 
