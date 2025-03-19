@@ -28,4 +28,3 @@ See [common plugin definitions](https://github.com/perses/perses/blob/main/docs/
 ## Format specification
 
 See [common plugin definitions](https://github.com/perses/perses/blob/main/docs/plugins/common.md#format-specification).
-

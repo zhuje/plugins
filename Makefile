@@ -33,4 +33,4 @@ checkdocs:
 .PHONY: fmt-docs
 fmt-docs:
 	@echo ">> format markdown document"
-	$(MDOX) fmt --soft-wraps -l $$(find . -name '*.md' -print) --links.validate.config-file=./.mdox.validate.yaml
+	$(MDOX) fmt --soft-wraps -l $$(find . -name '*.md' -not -path "**/node_modules/*" -print) --links.validate.config-file=./.mdox.validate.yaml
