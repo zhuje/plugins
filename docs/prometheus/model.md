@@ -85,7 +85,7 @@ spec:
 
   # `datasource` is a datasource selector. If not provided, the default PrometheusDatasource is used.
   # See the documentation about the datasources to understand how it is selected.
-  datasource: <Datasource selector> # Optional
+  datasource: <Prometheus Datasource selector> # Optional
   seriesNameFormat: <string> # Optional
 
   # `minStep` is the minimum time interval you want between each data points.
@@ -93,9 +93,7 @@ spec:
   resolution: <number> # Optional
 ```
 
-### Prometheus Datasource selector
-
-See [Prometheus Datasource selector](#prometheus-datasource-selector-4)
+- See [Prometheus Datasource selector](#prometheus-datasource-selector)
 
 #### Example
 
@@ -119,14 +117,12 @@ kind: "PrometheusLabelNamesVariable"
 spec:
   # `datasource` is a datasource selector. If not provided, the default PrometheusDatasource is used.
   # See the documentation about the datasources to understand how it is selected.
-  datasource: <Datasource selector> # Optional
+  datasource: <Prometheus Datasource selector> # Optional
   matchers:
     - <string> # Optional
 ```
 
-#### Prometheus Datasource selector
-
-See [Prometheus Datasource selector](#prometheus-datasource-selector-4)
+- See [Prometheus Datasource selector](#prometheus-datasource-selector)
 
 ### Example
 
@@ -173,15 +169,13 @@ kind: "PrometheusLabelValuesVariable"
 spec:
   # `datasource` is a datasource selector. If not provided, the default PrometheusDatasource is used.
   # See the documentation about the datasources to understand how it is selected.
-  datasource: <Datasource selector> # Optional
+  datasource: <Prometheus Datasource selector> # Optional
   labelName: <string>
   matchers:
     - <string> # Optional
 ```
 
-#### Prometheus Datasource selector
-
-See [Prometheus Datasource selector](#prometheus-datasource-selector-4)
+- See [Prometheus Datasource selector](#prometheus-datasource-selector)
 
 ### Example
 
@@ -239,9 +233,7 @@ spec:
   labelName: <string> # Optional
 ```
 
-#### Prometheus Datasource selector
-
-See [Prometheus Datasource selector](#prometheus-datasource-selector-4)
+- See [Prometheus Datasource selector](#prometheus-datasource-selector)
 
 ## Shared definitions
 
