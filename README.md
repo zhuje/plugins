@@ -18,6 +18,7 @@ First in this repository:
 
 Then in [`perses`](https://github.com/perses/perses) repository:
 1. Update the Perses configuration `config.yaml` to use development server for this plugin:
+
    ```yaml
    plugin:
      dev_environment:
