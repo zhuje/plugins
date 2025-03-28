@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/perses/plugins/scripts/command"
 	"github.com/perses/plugins/scripts/tag"
 	"github.com/sirupsen/logrus"
 )
@@ -34,17 +35,17 @@ func main() {
 	}
 
 	logrus.Info("Logging into the CUE Central Registry...")
-	if err := tag.RunCommand("cue", "login", "--token="+*token); err != nil {
+	if err := command.Run("cue", "login", "--token="+*token); err != nil {
 		logrus.WithError(err).Fatal("Error logging into CUE Central Registry")
 	}
 
 	logrus.Info("Ensuring the module is tidy...")
-	if err := tag.RunCommand("cue", "mod", "tidy"); err != nil {
+	if err := command.Run("cue", "mod", "tidy"); err != nil {
 		logrus.WithError(err).Fatal("Error ensuring the module is tidy")
 	}
 
 	logrus.Info("Publishing module...")
-	if err := tag.RunCommand("cue", "mod", "publish", version); err != nil {
+	if err := command.Run("cue", "mod", "publish", version); err != nil {
 		logrus.WithError(err).Fatal("Error publishing module")
 	}
 

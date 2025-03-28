@@ -11,27 +11,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tag
+package command
 
 import (
-	"flag"
-	"regexp"
-
-	"github.com/sirupsen/logrus"
+	"bytes"
+	"fmt"
+	"os"
+	"os/exec"
 )
 
-var tagNamePattern = regexp.MustCompile(`(?m)(.+)/v(\d+\.\d+\.\d+(?:-[\w\d.]+)?)`)
+func Run(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-func Flag() *string {
-	return flag.String("tag", "", "Name of the tag")
-}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 
-func Parse(tag *string) (string, string) {
-	tagSplit := tagNamePattern.FindStringSubmatch(*tag)
-	if len(tagSplit) != 3 {
-		logrus.Fatalf("Invalid tag name: %s", *tag)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to run %s %v: %w\nstderr: %s", name, args, err, stderr.String())
 	}
-	pluginFolderName := tagSplit[1]
-	version := tagSplit[2]
-	return pluginFolderName, version
+	return nil
 }
