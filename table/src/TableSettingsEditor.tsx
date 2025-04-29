@@ -76,6 +76,10 @@ export function TableSettingsEditor({ onChange, value }: TableSettingsEditorProp
     onChange({ ...value, density: density });
   }
 
+  function handlePaginationChange(_event: ChangeEvent, newValue: boolean): void {
+    onChange({ ...value, pagination: newValue });
+  }
+
   function handleAutoWidthChange(newValue: 'auto' | number): void {
     onChange({ ...value, defaultColumnWidth: newValue });
   }
@@ -89,6 +93,10 @@ export function TableSettingsEditor({ onChange, value }: TableSettingsEditorProp
       <OptionsEditorColumn>
         <OptionsEditorGroup title="Display">
           <DensitySelector value={value.density} onChange={handleDensityChange} />
+          <OptionsEditorControl
+            label="Pagination"
+            control={<Switch checked={!!value.pagination} onChange={handlePaginationChange} />}
+          />
           <DefaultColumnsDimensionsControl
             label="Width"
             defaultValue={DEFAULT_COLUMN_WIDTH}
