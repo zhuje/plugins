@@ -11,25 +11,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { DatasourceSelect, DatasourceSelectProps, useDatasourceClient, useTimeRange } from '@perses-dev/plugin-system';
-import { useId } from '@perses-dev/components';
-import { produce } from 'immer';
 import { FormControl, InputLabel, Stack, TextField } from '@mui/material';
+import { useId } from '@perses-dev/components';
+import {
+  DatasourceSelect,
+  DatasourceSelectProps,
+  useDatasourceClient,
+  useDatasourceSelectValueToSelector,
+  useTimeRange,
+} from '@perses-dev/plugin-system';
+import { produce } from 'immer';
 import { ReactElement, useMemo } from 'react';
+import { TraceQLEditor } from '../../components';
+import { TempoClient } from '../../model/tempo-client';
 import {
   DEFAULT_TEMPO,
   isDefaultTempoSelector,
   isTempoDatasourceSelector,
   TEMPO_DATASOURCE_KIND,
 } from '../../model/tempo-selectors';
-import { TempoClient } from '../../model/tempo-client';
-import { TraceQLEditor } from '../../components';
 import { TraceQueryEditorProps, useLimitState, useQueryState } from './query-editor-model';
 
 export function TempoTraceQueryEditor(props: TraceQueryEditorProps): ReactElement {
   const { onChange, value } = props;
   const { datasource } = value;
-  const selectedDatasource = datasource ?? DEFAULT_TEMPO;
+  const datasourceSelectValue = datasource ?? DEFAULT_TEMPO;
+  const selectedDatasource = useDatasourceSelectValueToSelector(datasourceSelectValue, TEMPO_DATASOURCE_KIND);
   const datasourceSelectLabelID = useId('tempo-datasource-label'); // for panels with multiple queries, this component is rendered multiple times on the same page
 
   const { data: client } = useDatasourceClient<TempoClient>(selectedDatasource);
@@ -64,7 +71,7 @@ export function TempoTraceQueryEditor(props: TraceQueryEditorProps): ReactElemen
         </InputLabel>
         <DatasourceSelect
           datasourcePluginKind={TEMPO_DATASOURCE_KIND}
-          value={selectedDatasource}
+          value={datasourceSelectValue}
           onChange={handleDatasourceChange}
           labelId={datasourceSelectLabelID}
           label="Tempo Datasource"
