@@ -14,13 +14,11 @@
 package model
 
 import (
-	tempo "github.com/perses/plugins/tempo/schemas/datasource:model"
+	tempoDs "github.com/perses/plugins/tempo/schemas/datasource:model"
 )
 
 kind: "TempoTraceQuery"
 spec: close({
-	datasource?: {
-		kind: tempo.kind
-	}
+	tempoDs.#selector
 	query: string
 })

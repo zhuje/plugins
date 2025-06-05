@@ -17,18 +17,9 @@ import (
 	"github.com/perses/perses/cue/common"
 )
 
-#legendValue: common.#calculation
-
-#legend: {
-	position: "bottom" | "right"
-	mode?:    "list" | "table"
-	size?:    "small" | "medium"
-	values?: [...#legendValue]
-}
-
 kind: "PieChart"
 spec: close({
-	legend?:        #legend
+	legend?:        common.#legendWithValues
 	calculation:    common.#calculation
 	format?:        common.#format
 	sort?:          "asc" | "desc"

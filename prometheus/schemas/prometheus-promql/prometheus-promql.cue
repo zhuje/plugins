@@ -14,15 +14,12 @@
 package model
 
 import (
-	prometheus "github.com/perses/plugins/prometheus/schemas/datasource:model"
+	promDs "github.com/perses/plugins/prometheus/schemas/datasource:model"
 )
 
 kind: "PrometheusPromQLVariable"
 spec: close({
-	datasource?: {
-		kind:  prometheus.kind
-		name?: string
-	}
+	promDs.#selector
 	expr:       string
 	labelName?: string
 })
