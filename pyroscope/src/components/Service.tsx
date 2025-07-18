@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import { ReactElement } from 'react';
-import { Stack, TextField, MenuItem, CircularProgress } from '@mui/material';
+import { Stack, TextField, MenuItem, CircularProgress, useTheme } from '@mui/material';
 import { PyroscopeDatasourceSelector } from '../model';
 import { useServices } from '../utils/use-query';
 
@@ -28,7 +28,16 @@ export function Service(props: ServiceProps): ReactElement {
   const { data: servicesOptions, isLoading: isServicesOptionsLoading } = useServices(datasource);
 
   return (
-    <Stack position="relative" sx={{ flexGrow: 1 }}>
+    <Stack
+      position="relative"
+      sx={{
+        flexGrow: 1,
+        maxWidth: '100%',
+        [useTheme().breakpoints.down('sm')]: {
+          width: '100%',
+        },
+      }}
+    >
       <TextField select label="Service" value={value} size="small" onChange={(event) => onChange?.(event.target.value)}>
         {isServicesOptionsLoading ? (
           <Stack width="100%" sx={{ alignItems: 'center', justifyContent: 'center' }}>
