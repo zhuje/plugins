@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_npm: true
@@ -26,7 +26,7 @@ jobs:
       - name: install percli
         uses: perses/cli-actions/actions/install_percli@v0.2.0
         with:
-          cli-version: "main-2025-03-20-398b7919-distroless"
+          cli-version: "v0.52.0-beta.0"
       - name: cache cue deps
         uses: actions/cache@v4
         with:
@@ -57,7 +57,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_npm: true
@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_npm: true
@@ -83,7 +83,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_npm: true
@@ -96,7 +96,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_go: true
@@ -105,7 +105,7 @@ jobs:
       - name: Install percli
         uses: perses/cli-actions/actions/install_percli@v0.2.0
         with:
-          cli-version: "v0.51.0-beta.1"
+          cli-version: "v0.52.0-beta.0"
       - uses: actions/cache@v4
         id: cache
         with:
@@ -114,14 +114,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cue-
       - run: make lint-plugins
-
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: perses/github-actions@v0.10.0
+      - uses: ./.github/perses-ci/actions/setup_environment
+        with:
+          enable_go: true
+          enable_go_cache: false
+          enable_npm: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8.0.0
+        with:
+          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
+          version: v2.3.0
+      - run: make golangci-lint
   module-check:
     name: "Check plugin modules"
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_go: true
@@ -151,7 +168,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - uses: perses/github-actions@v0.9.0
+      - uses: perses/github-actions@v0.10.0
       - uses: ./.github/perses-ci/actions/setup_environment
         with:
           enable_npm: true

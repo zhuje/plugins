@@ -12,18 +12,69 @@
 // limitations under the License.
 
 import { ReactElement, useMemo } from 'react';
-import { Link, List, ListItem, ListItemText } from '@mui/material';
+import { Divider, Link, List, ListItem, ListItemText } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { otlpcommonv1 } from '@perses-dev/core';
+import { Span, Trace } from '../trace';
+import { formatDuration } from '../utils';
 
 export type AttributeLinks = Record<string, (attributes: Record<string, otlpcommonv1.AnyValue>) => string>;
 
+export interface TraceAttributesProps {
+  trace: Trace;
+  span: Span;
+  attributeLinks?: AttributeLinks;
+}
+
+export function TraceAttributes(props: TraceAttributesProps) {
+  const { trace, span, attributeLinks } = props;
+
+  return (
+    <>
+      <List>
+        <AttributeItem name="span ID" value={span.spanId} />
+        <AttributeItem name="start" value={formatDuration(span.startTimeUnixMs - trace.startTimeUnixMs)} />
+        <AttributeItem name="duration" value={formatDuration(span.endTimeUnixMs - span.startTimeUnixMs)} />
+      </List>
+      <Divider />
+      {span.attributes.length > 0 && (
+        <>
+          <AttributeList
+            attributes={span.attributes.toSorted((a, b) => a.key.localeCompare(b.key))}
+            attributeLinks={attributeLinks}
+          />
+          <Divider />
+        </>
+      )}
+      <AttributeList
+        attributes={span.resource.attributes.toSorted((a, b) => a.key.localeCompare(b.key))}
+        attributeLinks={attributeLinks}
+      />
+    </>
+  );
+}
+
 export interface AttributeListProps {
+  attributes: otlpcommonv1.KeyValue[];
+  attributeLinks?: AttributeLinks;
+}
+
+export function AttributeList(props: AttributeListProps): ReactElement {
+  const { attributes, attributeLinks } = props;
+
+  return (
+    <List>
+      <AttributeItems attributes={attributes} attributeLinks={attributeLinks} />
+    </List>
+  );
+}
+
+interface AttributeItemsProps {
   attributeLinks?: AttributeLinks;
   attributes: otlpcommonv1.KeyValue[];
 }
 
-export function AttributeList(props: AttributeListProps): ReactElement {
+export function AttributeItems(props: AttributeItemsProps): ReactElement {
   const { attributeLinks, attributes } = props;
   const attributesMap = useMemo(
     () => Object.fromEntries(attributes.map((attr) => [attr.key, attr.value])),
@@ -32,40 +83,44 @@ export function AttributeList(props: AttributeListProps): ReactElement {
 
   return (
     <>
-      <List>
-        {attributes
-          .sort((a, b) => a.key.localeCompare(b.key))
-          .map((attribute, i) => (
-            <AttributeItem key={i} attribute={attribute} linkTo={attributeLinks?.[attribute.key]?.(attributesMap)} />
-          ))}
-      </List>
+      {attributes.map((attribute, i) => (
+        <AttributeItem
+          key={i}
+          name={attribute.key}
+          value={renderAttributeValue(attribute.value)}
+          link={attributeLinks?.[attribute.key]?.(attributesMap)}
+        />
+      ))}
     </>
   );
 }
 
 interface AttributeItemProps {
-  attribute: otlpcommonv1.KeyValue;
-  linkTo?: string;
+  name: string;
+  value: string;
+  link?: string;
 }
 
-function AttributeItem(props: AttributeItemProps): ReactElement {
-  const { attribute, linkTo } = props;
+export function AttributeItem(props: AttributeItemProps): ReactElement {
+  const { name, value, link } = props;
 
-  const value = linkTo ? (
-    <Link component={RouterLink} to={linkTo}>
-      {renderAttributeValue(attribute.value)}
+  const valueComponent = link ? (
+    <Link component={RouterLink} to={link}>
+      {value}
     </Link>
   ) : (
-    renderAttributeValue(attribute.value)
+    value
   );
 
   return (
-    <ListItem disablePadding>
+    <ListItem sx={{ px: 1, py: 0 }}>
       <ListItemText
-        primary={attribute.key}
-        secondary={value}
-        primaryTypographyProps={{ variant: 'h5' }}
-        secondaryTypographyProps={{ variant: 'body1', sx: { wordBreak: 'break-word' } }}
+        primary={name}
+        secondary={valueComponent}
+        slotProps={{
+          primary: { variant: 'h5' },
+          secondary: { variant: 'body1', sx: { wordBreak: 'break-word' } },
+        }}
       />
     </ListItem>
   );
