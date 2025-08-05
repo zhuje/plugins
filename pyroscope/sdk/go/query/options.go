@@ -15,12 +15,6 @@ package query
 
 import "github.com/perses/plugins/pyroscope/sdk/go/datasource"
 
-type LabelFilter struct {
-    LabelName  *string
-    LabelValue *string
-    Operator   *string
-}
-
 func Datasource(datasourceName string) Option {
 	return func(builder *Builder) error {
 		builder.Datasource = datasource.Selector(datasourceName)
@@ -30,7 +24,7 @@ func Datasource(datasourceName string) Option {
 
 func MaxNodes(max int) Option {
 	return func(builder *Builder) error {
-		builder.MaxNodes = max
+		builder.MaxNodes = &max
 		return nil
 	}
 }
@@ -51,7 +45,7 @@ func Filters(filters []LabelFilter) Option {
 
 func Service(service string) Option {
 	return func(builder *Builder) error {
-		builder.Service = service
+		builder.Service = &service
 		return nil
 	}
 }
