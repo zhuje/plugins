@@ -26,6 +26,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers';
 import { EChartsOption, ScatterSeriesOption } from 'echarts';
 import { formatValue } from '@perses-dev/core';
+import { replaceVariablesInString, useAllVariableValues, useRouterContext } from '@perses-dev/plugin-system';
 import { EChartTraceValue } from './ScatterChartPanel';
 
 use([
@@ -39,11 +40,11 @@ use([
   CanvasRenderer,
 ]);
 
-interface ScatterplotProps<T> {
+export interface ScatterplotProps {
   width: number;
   height: number;
   options: EChartsOption;
-  onClick?: (data: T) => void;
+  link?: string;
 }
 
 const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
@@ -51,9 +52,11 @@ const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
   timeStyle: 'medium',
 }).format;
 
-export function Scatterplot<T>(props: ScatterplotProps<T>): ReactElement {
-  const { width, height, options, onClick } = props;
+export function Scatterplot(props: ScatterplotProps): ReactElement {
+  const { width, height, options, link: linkTemplate } = props;
   const chartsTheme = useChartsTheme();
+  const variableValues = useAllVariableValues();
+  const { navigate } = useRouterContext();
 
   // Apache EChart Options Docs: https://echarts.apache.org/en/option.html
   const eChartOptions: EChartsCoreOption = {
@@ -109,11 +112,15 @@ export function Scatterplot<T>(props: ScatterplotProps<T>): ReactElement {
 
   const handleEvents: OnEventsType<ScatterSeriesOption['data'] | unknown> = useMemo(() => {
     const handlers: OnEventsType<ScatterSeriesOption['data'] | unknown> = {};
-    if (onClick) {
-      handlers.click = (params): void => onClick(params.data as T);
+    if (navigate && linkTemplate) {
+      handlers.click = (params): void => {
+        const linkVariables = params.data.linkVariables as Record<string, string> | undefined;
+        const link = replaceVariablesInString(linkTemplate, variableValues, linkVariables);
+        navigate(link);
+      };
     }
     return handlers;
-  }, [onClick]);
+  }, [linkTemplate, navigate, variableValues]);
 
   return (
     <EChart

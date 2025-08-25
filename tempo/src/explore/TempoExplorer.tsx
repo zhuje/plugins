@@ -87,7 +87,16 @@ function SearchResultsPanel({ queries }: SearchResultsPanelProps): ReactElement 
           }}
           definition={{
             kind: 'Panel',
-            spec: { queries, display: { name: '' }, plugin: { kind: 'ScatterChart', spec: {} } },
+            spec: {
+              queries,
+              display: { name: '' },
+              plugin: {
+                kind: 'ScatterChart',
+                spec: {
+                  link: linkToTrace,
+                },
+              },
+            },
           }}
         />
       </Box>
