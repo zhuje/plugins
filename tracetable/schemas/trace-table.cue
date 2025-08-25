@@ -21,7 +21,12 @@ package model
 	palette?: #palette
 }
 
+#links: {
+	trace?: string
+}
+
 kind: "TraceTable"
 spec: close({
 	visual?: #visual
+	links?:  #links
 })

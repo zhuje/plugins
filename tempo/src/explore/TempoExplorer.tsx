@@ -98,7 +98,18 @@ function SearchResultsPanel({ queries }: SearchResultsPanelProps): ReactElement 
         }}
         definition={{
           kind: 'Panel',
-          spec: { queries, display: { name: '' }, plugin: { kind: 'TraceTable', spec: {} } },
+          spec: {
+            queries,
+            display: { name: '' },
+            plugin: {
+              kind: 'TraceTable',
+              spec: {
+                links: {
+                  trace: linkToTrace,
+                },
+              },
+            },
+          },
         }}
       />
     </Stack>
