@@ -88,15 +88,16 @@ if (*#panel.type | null) == "table" {
 							#width: *property.value | "auto"
 							width: #width
 						}
+						// NB: enrich this part when this is done https://github.com/perses/perses/issues/2852
 					}
 				},
 			],
 		])
-
-		// Using flatten to avoid having an array of arrays with "value" mappings
+		
+		// Using flatten to get rid of the nested array for "value" mappings
 		// (https://cuelang.org/docs/howto/use-list-flattenn-to-flatten-lists/)
-		let x = list.FlattenN([
-			if (*#panel.fieldConfig.defaults.mappings | null) != null for mapping in #panel.fieldConfig.defaults.mappings {
+		#cellSettings: list.FlattenN([
+			for mapping in (*#panel.fieldConfig.defaults.mappings | []) {
 				if mapping.type == "value" {
 					[for key, option in mapping.options {
 						condition: {
@@ -113,8 +114,7 @@ if (*#panel.type | null) == "table" {
 						}
 					}]
 				}
-
-				if mapping.type == "range" || mapping.type == "regex" || mapping.type == "special" {
+				if mapping.type != "value" { // else
 					condition: [//switch
 						if mapping.type == "range" {
 							kind: "Range"
@@ -144,7 +144,6 @@ if (*#panel.type | null) == "table" {
 							}
 						},
 					][0]
-
 					if mapping.options.result.text != _|_ {
 						text: mapping.options.result.text
 					}
@@ -153,14 +152,12 @@ if (*#panel.type | null) == "table" {
 					}
 				}
 			},
-		], 1)
-
-		if len(x) > 0 {
-			cellSettings: x
+		], 1),
+		if len(#cellSettings) != 0 {
+			cellSettings: #cellSettings
 		}
 
 		// Logic to build transforms:
-
 		if #panel.transformations != _|_ {
 			#transforms: [
 				for transformation in #panel.transformations if transformation.id == "merge" || transformation.id == "joinByField" {
