@@ -216,6 +216,11 @@ describe('complete', () => {
     // cursor before `
     { doc: '{ .http.method=`', completion: 'GET', from: 15, expected: '{ .http.method=`GET`' },
     { doc: '{ .http.method=`', completion: 'GE"T', from: 16, expected: '{ .http.method=`GE"T`' },
+    { doc: '{ .http.method=`', completion: 'GE\\T', from: 16, expected: '{ .http.method=`GE\\T`' },
+    { doc: '{ .http.method=`', completion: 'GE \\ " T', from: 16, expected: '{ .http.method=`GE \\ " T`' },
+
+    // flip quote char
+    { doc: '{ .http.method=`', completion: 'GE`"T', from: 16, expected: '{ .http.method="GE`\\"T"' },
   ])('quote completion $completion at $doc pos $pos', ({ doc, completion, from, to, expected }) => {
     const state = EditorState.create({ doc });
     const view = new EditorView({ state });
