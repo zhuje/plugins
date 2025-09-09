@@ -72,14 +72,35 @@ spec: {
 		}
 	}
 
-	#min: *#panel.fieldConfig.defaults.min | null
+	#min: [// switch
+		if (*#panel.fieldConfig.defaults.min | null) != null {
+			#panel.fieldConfig.defaults.min
+		},
+		if (*#panel.fieldConfig.defaults.custom.axisSoftMin | null) != null {
+			#panel.fieldConfig.defaults.custom.axisSoftMin
+		},
+		null,
+	][0]
 	if #min != null {
 		yAxis: min: #min
 	}
 
-	#max: *#panel.fieldConfig.defaults.max | null
+	#max: [// switch
+		if (*#panel.fieldConfig.defaults.max | null) != null {
+			#panel.fieldConfig.defaults.max
+		},
+		if (*#panel.fieldConfig.defaults.custom.axisSoftMax | null) != null {
+			#panel.fieldConfig.defaults.custom.axisSoftMax
+		},
+		null,
+	][0]
 	if #max != null {
 		yAxis: max: #max
+	}
+
+	#yAxisLabel: *#panel.fieldConfig.defaults.custom.axisLabel | null
+	if #yAxisLabel != null if len(#yAxisLabel) > 0 {
+		yAxis: label: #yAxisLabel
 	}
 
 	// thresholds
