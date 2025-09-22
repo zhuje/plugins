@@ -15,6 +15,11 @@ import { Definition, ThresholdOptions, FormatOptions } from '@perses-dev/core';
 import { OptionsEditorProps, LegendSpecOptions } from '@perses-dev/plugin-system';
 
 /**
+ * Line style options for time series charts.
+ */
+export type LineStyleType = 'solid' | 'dashed' | 'dotted';
+
+/**
  * The schema for a TimeSeriesChart panel.
  */
 export interface TimeSeriesChartDefinition extends Definition<TimeSeriesChartOptions> {
@@ -35,8 +40,10 @@ export interface TimeSeriesChartOptions {
 
 export interface QuerySettingsOptions {
   queryIndex: number;
-  colorMode: 'fixed' | 'fixed-single';
-  colorValue: string;
+  colorMode?: 'fixed' | 'fixed-single';
+  colorValue?: string;
+  lineStyle?: LineStyleType;
+  areaOpacity?: number;
 }
 
 export type TimeSeriesChartOptionsEditorProps = OptionsEditorProps<TimeSeriesChartOptions>;
@@ -60,7 +67,7 @@ export interface TimeSeriesChartPaletteOptions {
 export type TimeSeriesChartVisualOptions = {
   display?: 'line' | 'bar';
   lineWidth?: number;
-  lineStyle?: 'solid' | 'dashed' | 'dotted';
+  lineStyle?: LineStyleType;
   areaOpacity?: number;
   showPoints?: 'auto' | 'always';
   palette?: TimeSeriesChartPaletteOptions;
@@ -166,6 +173,14 @@ export const LINE_STYLE_CONFIG = {
   solid: { label: 'Solid' },
   dashed: { label: 'Dashes' },
   dotted: { label: 'Dots' },
+};
+
+export const OPACITY_CONFIG = {
+  label: 'Opacity',
+  testId: 'slider-opacity',
+  min: 0,
+  max: 1,
+  step: 0.05,
 };
 
 // Both of these constants help produce a value that is LESS THAN the initial value.
