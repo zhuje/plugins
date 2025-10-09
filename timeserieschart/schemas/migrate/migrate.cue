@@ -16,6 +16,7 @@ package migrate
 import (
 	commonMigrate "github.com/perses/perses/cue/common/migrate"
 	"strings"
+	"strconv"
 )
 
 #grafanaType: "timeseries" | "graph"
@@ -128,17 +129,17 @@ spec: {
 	}
 
 	// visual
-	#lineWidth: *#panel.fieldConfig.defaults.custom.lineWidth | null
+	#lineWidthRaw: *#panel.fieldConfig.defaults.custom.lineWidth | null
+	#lineWidth: [
+		if (#lineWidthRaw & string) != _|_ { strconv.Atoi(#lineWidthRaw) },
+		#lineWidthRaw,
+	][0]
 	if #lineWidth != null {
-		if #lineWidth > 3 {
-			visual: lineWidth: 3 // line width can't go beyond 3 in Perses
-		}
-		if #lineWidth < 0.25 {
-			visual: lineWidth: 0.25 // line width can't go below 0.25 in Perses
-		}
-		if #lineWidth >= 0.25 && #lineWidth <= 3 {
-			visual: lineWidth: #lineWidth
-		}
+		visual: lineWidth: [
+			if #lineWidth > 3 { 3 },        // line width can't go beyond 3 in Perses
+			if #lineWidth < 0.25 { 0.25 },  // line width can't go below 0.25 in Perses
+			#lineWidth,
+		][0]
 	}
 
 	#lineStyle: *#panel.fieldConfig.defaults.custom.lineStyle.fill | null
