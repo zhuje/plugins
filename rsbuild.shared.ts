@@ -115,7 +115,8 @@ function getRsbuildConfig(name: string): RsbuildConfig {
     dev: { assetPrefix },
     source: { entry: { main: './src/index-federation.ts' } },
     output: {
-      assetPrefix,
+      // Remove hardcoded assetPrefix to allow Module Federation getPublicPath to control asset loading
+      // assetPrefix,
       copy: [{ from: 'package.json' }, { from: 'README.md' }, { from: '../LICENSE', to: './LICENSE', toType: 'file' }],
       distPath: {
         root: 'dist',
@@ -126,6 +127,17 @@ function getRsbuildConfig(name: string): RsbuildConfig {
     },
     tools: {
       htmlPlugin: false,
+      rspack: (config, { env }) => {
+        // Set webpack publicPath to use the same dynamic logic as Module Federation getPublicPath
+        // This ensures that __webpack_require__.p uses the dynamic path instead of hardcoded "/"
+        config.output = config.output || {};
+
+        // Set to 'auto' to allow runtime override via __webpack_public_path__
+        config.output.publicPath = 'auto';
+
+        console.log(`🔧 [RSPACK_CONFIG] Set dynamic publicPath for ${name} to: ${config.output.publicPath}`);
+        return config;
+      },
     },
   };
 }

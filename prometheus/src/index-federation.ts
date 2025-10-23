@@ -11,4 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Set dynamic public path for webpack asset loading
+const prefix = (window as any).PERSES_PLUGIN_ASSETS_PATH || (window as any).PERSES_APP_CONFIG?.api_prefix || '';
+(globalThis as any).__webpack_public_path__ = prefix + '/plugins/Prometheus/';
+
 import('./bootstrap');
