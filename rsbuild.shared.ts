@@ -135,6 +135,6 @@ function getBaseModuleFederationConfig(name: string): ModuleFederationOptions {
     name,
     dts: false,
     runtime: false,
-    getPublicPath: `function() { const prefix = window.PERSES_PLUGIN_ASSETS_PATH || window.PERSES_APP_CONFIG?.api_prefix || ""; return prefix + "${getAssetPrefix(name)}"; }`,
+    getPublicPath: `function() { const prefix = window.PERSES_PLUGIN_ASSETS_PATH || window.PERSES_APP_CONFIG?.api_prefix || ""; __webpack_public_path__ = prefix + "${getAssetPrefix(name)}"; return prefix + "${getAssetPrefix(name)}";}`,
   };
 }
