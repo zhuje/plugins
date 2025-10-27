@@ -20,6 +20,87 @@ import { mergeRsbuildConfig, RsbuildConfig } from '@rsbuild/core';
 const PLUGINS_PATH = '/plugins';
 
 /**
+ * Standard shared dependencies for Perses plugins.
+ * These dependencies are marked as singletons to ensure only one instance
+ * is loaded across all plugins and the host application.
+ *
+ * Dependencies are organized by category for better maintainability.
+ */
+export const SHARED_DEPENDENCIES = {
+  // React ecosystem
+  react: {
+    requiredVersion: '18.2.0',
+    singleton: true,
+  },
+  'react-dom': {
+    requiredVersion: '18.2.0',
+    singleton: true,
+  },
+  'react-hook-form': {
+    singleton: true,
+  },
+  'react-router-dom': {
+    singleton: true,
+  },
+
+  // Emotion CSS-in-JS
+  '@emotion/react': {
+    requiredVersion: '^11.11.3',
+    singleton: true,
+  },
+  '@emotion/styled': {
+    singleton: true,
+  },
+
+  // Form handling
+  '@hookform/resolvers': {
+    singleton: true,
+  },
+
+  // Data fetching
+  '@tanstack/react-query': {
+    singleton: true,
+  },
+
+  // Date/time utilities
+  'date-fns': {
+    singleton: true,
+  },
+  'date-fns-tz': {
+    singleton: true,
+  },
+
+  // Utilities
+  lodash: {
+    singleton: true,
+  },
+
+  // Charts and visualization
+  echarts: {
+    singleton: true,
+  },
+
+  // Perses ecosystem
+  '@perses-dev/components': {
+    singleton: true,
+  },
+  '@perses-dev/plugin-system': {
+    singleton: true,
+  },
+  '@perses-dev/explore': {
+    singleton: true,
+  },
+  '@perses-dev/dashboards': {
+    singleton: true,
+  },
+} as const;
+
+/**
+ * Type-safe shared dependency configuration
+ */
+export type SharedDependencyConfig = typeof SHARED_DEPENDENCIES;
+
+/**
  * Configuration options for building a Perses plugin with rsbuild.
  * @see {@link createConfigForPlugin}
  */
@@ -141,5 +222,85 @@ function getBaseModuleFederationConfig(name: string): ModuleFederationOptions {
     dts: false,
     runtime: false,
     getPublicPath: `function() { const prefix = window.PERSES_PLUGIN_ASSETS_PATH || window.PERSES_APP_CONFIG?.api_prefix || ""; return prefix + "${getAssetPrefix(name)}"; }`,
+    shared: SHARED_DEPENDENCIES,
   };
+}
+
+/**
+ * Helper function to merge additional dependencies with the standard shared dependencies.
+ * Useful for plugins that need extra dependencies not covered by SHARED_DEPENDENCIES.
+ *
+ * @param additionalDeps Additional shared dependencies specific to the plugin
+ * @returns Merged shared dependencies configuration
+ *
+ * @example
+ * ```ts
+ * const customShared = mergeSharedDependencies({
+ *   '@perses-dev/core': { singleton: true },
+ *   'use-resize-observer': { requiredVersion: '^9.1.0', singleton: true }
+ * });
+ * ```
+ */
+export function mergeSharedDependencies(additionalDeps: Record<string, any>) {
+  return {
+    ...SHARED_DEPENDENCIES,
+    ...additionalDeps,
+  };
+}
+
+/**
+ * Common shared dependencies for plugins that need additional Perses packages.
+ * Includes all standard dependencies plus commonly used extras.
+ */
+export const EXTENDED_SHARED_DEPENDENCIES = mergeSharedDependencies({
+  '@perses-dev/core': { singleton: true },
+});
+
+/**
+ * Creates a simplified configuration for standard Perses visualization plugins.
+ * This is a convenience function that provides sensible defaults for most chart plugins.
+ *
+ * @param name The name of the plugin (PascalCase)
+ * @param port The dev server port number
+ * @param exposes Module Federation expose configuration
+ * @param additionalShared Optional additional shared dependencies
+ * @returns A complete rsbuild configuration object
+ *
+ * @example
+ * ```ts
+ * import { createVisualizationPlugin } from './rsbuild.shared';
+ *
+ * // Simple usage
+ * export default createVisualizationPlugin('MyChart', 3020, {
+ *   './MyChart': './src/plugins/MyChart.tsx'
+ * });
+ *
+ * // With additional shared dependencies
+ * export default createVisualizationPlugin('MyChart', 3020, {
+ *   './MyChart': './src/plugins/MyChart.tsx'
+ * }, {
+ *   'use-resize-observer': { requiredVersion: '^9.1.0', singleton: true }
+ * });
+ * ```
+ */
+export function createVisualizationPlugin(
+  name: string,
+  port: number,
+  exposes: Record<string, string>,
+  additionalShared?: Record<string, any>
+) {
+  return createConfigForPlugin({
+    name,
+    rsbuildConfig: {
+      server: { port },
+      plugins: [
+        // Most visualization plugins use React
+        require('@rsbuild/plugin-react').pluginReact(),
+      ],
+    },
+    moduleFederation: {
+      exposes,
+      shared: additionalShared ? mergeSharedDependencies(additionalShared) : undefined,
+    },
+  });
 }
