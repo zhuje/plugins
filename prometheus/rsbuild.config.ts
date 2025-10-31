@@ -17,7 +17,6 @@ import { createConfigForPlugin } from '../rsbuild.shared';
 export default createConfigForPlugin({
   name: 'Prometheus',
   rsbuildConfig: {
-    server: { port: 3009 },
     plugins: [pluginReact()],
   },
   moduleFederation: {
