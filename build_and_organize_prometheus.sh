@@ -3,8 +3,9 @@
 # Script to build and organize the prometheus plugin
 # This script will:
 # 1. Build the prometheus plugin
-# 2. Create a plugins directory structure
-# 3. Copy and organize files as specified
+# 2. Create a .dev directory with plugins subdirectory (.dev/plugins/)
+# 3. Copy prometheus to .dev/plugins/prometheus
+# 4. Organize files as specified in .dev/plugins/prometheus structure
 
 echo "Starting prometheus plugin build and organization..."
 
@@ -31,54 +32,63 @@ fi
 # Go back to root directory
 cd ..
 
-# Step 2: Create plugins directory if it doesn't exist
-echo "Step 2: Creating plugins directory structure..."
-if [ ! -d "plugins" ]; then
-    echo "Creating plugins directory..."
-    mkdir plugins
+# Step 2: Create .dev directory and plugins subdirectory
+echo "Step 2: Creating .dev directory and plugins subdirectory..."
+if [ ! -d ".dev" ]; then
+    echo "Creating .dev directory..."
+    mkdir .dev
+    echo ".dev directory created successfully!"
 else
-    echo "Plugins directory already exists"
+    echo ".dev directory already exists"
 fi
 
-# Step 3: Copy prometheus to plugins/prometheus
-echo "Step 3: Setting up plugins/prometheus structure..."
-
-# Remove existing plugins/prometheus if it exists
-if [ -d "plugins/prometheus" ]; then
-    echo "Removing existing plugins/prometheus directory..."
-    rm -rf plugins/prometheus
+if [ ! -d ".dev/plugins" ]; then
+    echo "Creating .dev/plugins directory..."
+    mkdir .dev/plugins
+    echo ".dev/plugins directory created successfully!"
+else
+    echo ".dev/plugins directory already exists"
 fi
 
-# Create the plugins/prometheus directory
-mkdir -p plugins/prometheus
+# Step 3: Copy prometheus to .dev/plugins/prometheus
+echo "Step 3: Setting up .dev/plugins/prometheus structure..."
+
+# Remove existing .dev/plugins/prometheus if it exists
+if [ -d ".dev/plugins/prometheus" ]; then
+    echo "Removing existing .dev/plugins/prometheus directory..."
+    rm -rf .dev/plugins/prometheus
+fi
+
+# Create the .dev/plugins/prometheus directory
+mkdir -p .dev/plugins/prometheus
 
 # Step 4: Copy and organize the required files
-echo "Step 4: Organizing files in plugins/prometheus..."
+echo "Step 4: Organizing files in .dev/plugins/prometheus..."
 
 # Copy files from prometheus/dist (built artifacts)
 echo "Copying built artifacts from prometheus/dist..."
-cp -r prometheus/dist/__mf plugins/prometheus/
-cp prometheus/dist/LICENSE plugins/prometheus/
-cp prometheus/dist/README.md plugins/prometheus/
-cp -r prometheus/dist/lib plugins/prometheus/
-cp prometheus/dist/mf-manifest.json plugins/prometheus/
-cp prometheus/dist/mf-stats.json plugins/prometheus/
-cp prometheus/dist/package.json plugins/prometheus/
+cp -r prometheus/dist/__mf .dev/plugins/prometheus/
+cp prometheus/dist/LICENSE .dev/plugins/prometheus/
+cp prometheus/dist/README.md .dev/plugins/prometheus/
+cp -r prometheus/dist/lib .dev/plugins/prometheus/
+cp prometheus/dist/mf-manifest.json .dev/plugins/prometheus/
+cp prometheus/dist/mf-stats.json .dev/plugins/prometheus/
+cp prometheus/dist/package.json .dev/plugins/prometheus/
 
 # Copy files from prometheus source directory
 echo "Copying source files..."
-cp -r prometheus/cue.mod plugins/prometheus/
-cp -r prometheus/schemas plugins/prometheus/
+cp -r prometheus/cue.mod .dev/plugins/prometheus/
+cp -r prometheus/schemas .dev/plugins/prometheus/
 
-# Step 5: Navigate to plugins/prometheus to verify structure
+# Step 5: Navigate to .dev/plugins/prometheus to verify structure
 echo "Step 5: Verifying final structure..."
-cd plugins/prometheus
+cd .dev/plugins/prometheus
 
-echo "Final structure in plugins/prometheus:"
+echo "Final structure in .dev/plugins/prometheus:"
 ls -la
 
 echo ""
-echo "Verification complete! Contents of plugins/prometheus:"
+echo "Verification complete! Contents of .dev/plugins/prometheus:"
 echo "✓ __mf/ (directory)"
 echo "✓ cue.mod/ (directory)"
 echo "✓ lib/ (directory)"
