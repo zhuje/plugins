@@ -24,4 +24,4 @@ dist/
 /*/cue.mod/pkg/
 
 # hack file for development 
-.dev 
+hack/.plugins 
