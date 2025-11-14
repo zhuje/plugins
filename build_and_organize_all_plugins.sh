@@ -7,14 +7,21 @@
 # 3. Copy each plugin to .dev/plugins/{plugin_name}
 # 4. Organize files as specified in .dev/plugins/{plugin_name} structure
 
+# Check if running with bash
+if [ -z "$BASH_VERSION" ]; then
+    echo "❌ Error: This script requires bash to run"
+    echo "Please run with: bash $0"
+    exit 1
+fi
+
 set -e  # Exit on any error
 
 echo "Starting comprehensive plugin build and organization..."
 
 # List of all plugins to process
+# comment out the plugins you don't want to build
 PLUGINS=(
     "barchart"
-    "clickhouse"
     "datasourcevariable"
     "flamechart"
     "gaugechart"
@@ -36,8 +43,74 @@ PLUGINS=(
     "timeseriestable"
     "tracetable"
     "tracingganttchart"
-    "victorialogs"
 )
+
+# Function to get plugin name and version from plugins.yaml
+get_plugin_info_from_yaml() {
+    local plugin_dir="$1"
+
+    # Check if plugins.yaml exists
+    if [ ! -f "plugins.yaml" ]; then
+        return 1
+    fi
+
+    # Parse YAML file to find matching plugin
+    local current_name=""
+    local current_version=""
+    local found_match=0
+
+    while IFS= read -r line; do
+        if [[ $line =~ ^[[:space:]]*-[[:space:]]*name:[[:space:]]*\"(.+)\" ]]; then
+            current_name="${BASH_REMATCH[1]}"
+        elif [[ $line =~ ^[[:space:]]*version:[[:space:]]*\"(.+)\" ]]; then
+            current_version="${BASH_REMATCH[1]}"
+
+            # Check if this matches our plugin directory (case insensitive comparison)
+            if [[ -n "$current_name" && -n "$current_version" ]]; then
+                local lowercase_name=$(echo "$current_name" | tr '[:upper:]' '[:lower:]')
+                local lowercase_dir=$(echo "$plugin_dir" | tr '[:upper:]' '[:lower:]')
+
+                if [[ "$lowercase_name" == "$lowercase_dir" ]]; then
+                    echo "${current_name}-${current_version}"
+                    return 0
+                fi
+
+                current_name=""
+                current_version=""
+            fi
+        fi
+    done < "plugins.yaml"
+
+    return 1
+}
+
+# Function to get versioned plugin name
+get_versioned_plugin_name() {
+    local plugin_dir="$1"
+
+    # Try to get name and version from plugins.yaml
+    local yaml_result=$(get_plugin_info_from_yaml "$plugin_dir")
+    if [[ $? -eq 0 && -n "$yaml_result" ]]; then
+        echo "$yaml_result"
+        return 0
+    fi
+
+    # Fallback: Extract version from package.json
+    if [ -f "$plugin_dir/package.json" ]; then
+        local version=$(grep '"version":' "$plugin_dir/package.json" | sed 's/.*"version":[[:space:]]*"\([^"]*\)".*/\1/')
+        if [[ -n "$version" ]]; then
+            # Create a capitalized name
+            local capitalized_name=$(echo "$plugin_dir" | sed 's/.*/\L&/; s/[a-z]/\u&/')
+            echo "${capitalized_name}-${version}"
+            return 0
+        fi
+    fi
+
+    # Final fallback: use directory name as-is
+    echo "$plugin_dir"
+    return 1
+}
+
 
 # Function to check if directory exists and has package.json
 check_plugin_directory() {
@@ -110,55 +183,62 @@ build_plugin() {
 # Function to organize files for a single plugin
 organize_plugin() {
     local plugin_name="$1"
+    local versioned_name=$(get_versioned_plugin_name "$plugin_name")
 
     echo ""
-    echo "📁 Organizing plugin: $plugin_name"
+    echo "📁 Organizing plugin: $plugin_name -> $versioned_name"
     echo "==========================================="
 
-    # Remove existing .dev/plugins/{plugin_name} if it exists
+    # Remove existing .dev/plugins/{versioned_name} if it exists
+    if [ -d ".dev/plugins/$versioned_name" ]; then
+        echo "Removing existing .dev/plugins/$versioned_name directory..."
+        rm -rf ".dev/plugins/$versioned_name"
+    fi
+
+    # Also remove old plugin_name directory if it exists (for cleanup)
     if [ -d ".dev/plugins/$plugin_name" ]; then
-        echo "Removing existing .dev/plugins/$plugin_name directory..."
+        echo "Removing old .dev/plugins/$plugin_name directory..."
         rm -rf ".dev/plugins/$plugin_name"
     fi
 
-    # Create the .dev/plugins/{plugin_name} directory
-    mkdir -p ".dev/plugins/$plugin_name"
+    # Create the .dev/plugins/{versioned_name} directory
+    mkdir -p ".dev/plugins/$versioned_name"
 
-    echo "Copying built artifacts from $plugin_name/dist..."
+    echo "Copying built artifacts from $plugin_name/dist to .dev/plugins/$versioned_name..."
 
     # Copy files from {plugin_name}/dist (built artifacts) - only if they exist
     if [ -d "$plugin_name/dist/__mf" ]; then
-        cp -r "$plugin_name/dist/__mf" ".dev/plugins/$plugin_name/"
+        cp -r "$plugin_name/dist/__mf" ".dev/plugins/$versioned_name/"
     fi
     if [ -f "$plugin_name/dist/LICENSE" ]; then
-        cp "$plugin_name/dist/LICENSE" ".dev/plugins/$plugin_name/"
+        cp "$plugin_name/dist/LICENSE" ".dev/plugins/$versioned_name/"
     fi
     if [ -f "$plugin_name/dist/README.md" ]; then
-        cp "$plugin_name/dist/README.md" ".dev/plugins/$plugin_name/"
+        cp "$plugin_name/dist/README.md" ".dev/plugins/$versioned_name/"
     fi
     if [ -d "$plugin_name/dist/lib" ]; then
-        cp -r "$plugin_name/dist/lib" ".dev/plugins/$plugin_name/"
+        cp -r "$plugin_name/dist/lib" ".dev/plugins/$versioned_name/"
     fi
     if [ -f "$plugin_name/dist/mf-manifest.json" ]; then
-        cp "$plugin_name/dist/mf-manifest.json" ".dev/plugins/$plugin_name/"
+        cp "$plugin_name/dist/mf-manifest.json" ".dev/plugins/$versioned_name/"
     fi
     if [ -f "$plugin_name/dist/mf-stats.json" ]; then
-        cp "$plugin_name/dist/mf-stats.json" ".dev/plugins/$plugin_name/"
+        cp "$plugin_name/dist/mf-stats.json" ".dev/plugins/$versioned_name/"
     fi
     if [ -f "$plugin_name/dist/package.json" ]; then
-        cp "$plugin_name/dist/package.json" ".dev/plugins/$plugin_name/"
+        cp "$plugin_name/dist/package.json" ".dev/plugins/$versioned_name/"
     fi
 
     # Copy files from plugin source directory - only if they exist
     echo "Copying source files..."
     if [ -d "$plugin_name/cue.mod" ]; then
-        cp -r "$plugin_name/cue.mod" ".dev/plugins/$plugin_name/"
+        cp -r "$plugin_name/cue.mod" ".dev/plugins/$versioned_name/"
     fi
     if [ -d "$plugin_name/schemas" ]; then
-        cp -r "$plugin_name/schemas" ".dev/plugins/$plugin_name/"
+        cp -r "$plugin_name/schemas" ".dev/plugins/$versioned_name/"
     fi
 
-    echo "✅ $plugin_name organization completed!"
+    echo "✅ $plugin_name organization completed as $versioned_name!"
 }
 
 # Main execution starts here
@@ -183,10 +263,15 @@ else
     echo ".dev/plugins directory already exists"
 fi
 
+# Plugin mapping will be loaded on-demand from plugins.yaml
+echo "📋 Using plugins.yaml for plugin name and version mapping"
+
 # Step 2: Process each plugin
 successful_builds=0
 failed_builds=0
 skipped_builds=0
+
+declare -a ORGANIZED_PLUGINS
 
 for plugin in "${PLUGINS[@]}"; do
     echo ""
@@ -203,6 +288,8 @@ for plugin in "${PLUGINS[@]}"; do
     if build_plugin "$plugin"; then
         # If build successful, organize the files
         organize_plugin "$plugin"
+        versioned_name=$(get_versioned_plugin_name "$plugin")
+        ORGANIZED_PLUGINS+=("$versioned_name")
         ((successful_builds++))
         echo "✅ $plugin completed successfully!"
     else
@@ -222,10 +309,10 @@ echo "⚠️  Skipped builds: $skipped_builds"
 echo ""
 
 if [ $successful_builds -gt 0 ]; then
-    echo "📁 Successfully organized plugins:"
-    for plugin in "${PLUGINS[@]}"; do
-        if [ -d ".dev/plugins/$plugin" ]; then
-            echo "   ✓ .dev/plugins/$plugin/"
+    echo "📁 Successfully organized plugins with versioned names:"
+    for versioned_plugin in "${ORGANIZED_PLUGINS[@]}"; do
+        if [ -d ".dev/plugins/$versioned_plugin" ]; then
+            echo "   ✓ .dev/plugins/$versioned_plugin/"
         fi
     done
 fi
