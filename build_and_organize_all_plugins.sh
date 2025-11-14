@@ -62,8 +62,26 @@ build_plugin() {
 
     cd "$plugin_name"
 
-    # Check if npm run build script exists
-    if npm run | grep -q "build"; then
+    # Check if npm run build script exists by parsing package.json
+    if [ ! -f "package.json" ]; then
+        echo "❌ No package.json found for $plugin_name. Skipping..."
+        cd ..
+        return 1
+    fi
+
+    if grep -A 10 '"scripts"' package.json | grep -q '"build"'; then
+        echo "Installing dependencies for $plugin_name..."
+        npm install
+        INSTALL_EXIT_CODE=$?
+
+        if [ $INSTALL_EXIT_CODE -ne 0 ]; then
+            echo "❌ npm install failed for $plugin_name (exit code: $INSTALL_EXIT_CODE)"
+            cd ..
+            return 1
+        else
+            echo "✅ Dependencies installed successfully for $plugin_name"
+        fi
+
         echo "Running npm run build in $plugin_name directory..."
         npm run build
         BUILD_EXIT_CODE=$?
@@ -92,6 +110,7 @@ build_plugin() {
 # Function to organize files for a single plugin
 organize_plugin() {
     local plugin_name="$1"
+
     echo ""
     echo "📁 Organizing plugin: $plugin_name"
     echo "==========================================="
