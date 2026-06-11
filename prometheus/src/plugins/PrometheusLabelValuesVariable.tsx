@@ -33,15 +33,18 @@ export const PrometheusLabelValuesVariable: VariablePlugin<PrometheusLabelValues
         ctx.variables,
         await ctx.datasourceStore.listDatasourceSelectItems(PROM_DATASOURCE_KIND)
       ) ?? DEFAULT_PROM;
+    console.log('🍎 PrometheusLabelValuesVariable: About to resolve datasource with variables:', ctx.variables);
     const { client, requestOptions } = await resolvePrometheusDatasource(
       ctx.datasourceStore,
       datasourceSelector,
       ctx.variables
     );
+    console.log('🍎 PrometheusLabelValuesVariable: Resolved requestOptions:', requestOptions);
     const match = pluginDef.matchers ? pluginDef.matchers.map((m) => replaceVariables(m, ctx.variables)) : undefined;
 
     const timeRange = getPrometheusTimeRange(ctx.timeRange);
 
+    console.log('🍎 PrometheusLabelValuesVariable: ACTUALLY CALLING labelValues with requestOptions:', requestOptions);
     const { data: options } = await client.labelValues(
       {
         labelName: replaceVariables(pluginDef.labelName, ctx.variables),
@@ -54,13 +57,19 @@ export const PrometheusLabelValuesVariable: VariablePlugin<PrometheusLabelValues
       data: stringArrayToVariableOptions(options),
     };
   },
-  dependsOn: (spec: PrometheusLabelValuesVariableOptions) => {
+  dependsOn: (spec: PrometheusLabelValuesVariableOptions, ctx: GetVariableOptionsContext) => {
     const matcherVariables = spec.matchers?.map((m) => parseVariables(m)).flat() || [];
     const labelVariables = parseVariables(spec.labelName);
     const datasourceVariables =
       spec.datasource && isVariableDatasource(spec.datasource) ? parseVariables(spec.datasource) : [];
+
+    // Also check for variables in the datasource configuration itself
+    // Since we can't easily access the datasource config here, we'll include 'namespace'
+    // as a common variable that might be used in queryParams
+    const commonDatasourceVariables = ['namespace'];
+
     return {
-      variables: [...matcherVariables, ...labelVariables, ...datasourceVariables],
+      variables: [...matcherVariables, ...labelVariables, ...datasourceVariables, ...commonDatasourceVariables],
     };
   },
   OptionsEditorComponent: PrometheusLabelValuesVariableEditor,

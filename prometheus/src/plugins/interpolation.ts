@@ -43,8 +43,16 @@ export function interpolateDatasourceProxyParams(
   const rawHeaders = spec.proxy?.spec?.headers;
   const rawQueryParams = spec.queryParams;
 
-  return {
+  const result = {
     headers: rawHeaders ? interpolateHeaders(rawHeaders, variableState) : undefined,
     queryParams: rawQueryParams ? interpolateQueryParams(rawQueryParams, variableState) : undefined,
   };
+
+  console.log('🍎 interpolateDatasourceProxyParams called', {
+    rawQueryParams,
+    variableState,
+    interpolatedQueryParams: result.queryParams
+  });
+
+  return result;
 }

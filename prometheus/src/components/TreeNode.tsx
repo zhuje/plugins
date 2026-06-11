@@ -248,7 +248,7 @@ export default function TreeNode({
           padding: 1,
           marginBottom: 1.5,
           borderRadius: 2,
-          backgroundColor: theme.palette.background.code,
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         {parentEl !== undefined && (

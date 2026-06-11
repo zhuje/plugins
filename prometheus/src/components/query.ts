@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { useDatasourceClient } from '@perses-dev/plugin-system';
+import { useDatasourceClient, useDatasourceStore, useVariableValues } from '@perses-dev/plugin-system';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { DatasourceSelector } from '@perses-dev/spec';
+import { DatasourceSelector, DatasourceSpec } from '@perses-dev/spec';
 import { StatusError } from '@perses-dev/client';
 import {
   InstantQueryRequestParameters,
@@ -22,6 +22,8 @@ import {
   ParseQueryResponse,
   PrometheusClient,
 } from '../model';
+import { interpolateDatasourceProxyParams } from '../plugins/interpolation';
+import { PrometheusDatasourceSpec } from '../plugins/types';
 
 export function useParseQuery(
   content: string,
@@ -29,6 +31,8 @@ export function useParseQuery(
   enabled?: boolean
 ): UseQueryResult<ParseQueryResponse, StatusError> {
   const { data: client } = useDatasourceClient<PrometheusClient>(datasource);
+  const datasourceStore = useDatasourceStore();
+  const variableState = useVariableValues();
 
   return useQuery<ParseQueryResponse, StatusError>({
     enabled: !!client && enabled,
@@ -36,7 +40,13 @@ export function useParseQuery(
     queryFn: async () => {
       const params: ParseQueryRequestParameters = { query: content };
 
-      return await client!.parseQuery(params);
+      // Get datasource spec and interpolate variables
+      const datasourceSpec = (await datasourceStore.getDatasource(
+        datasource
+      )) as DatasourceSpec<PrometheusDatasourceSpec>;
+      const interpolatedOptions = interpolateDatasourceProxyParams(datasourceSpec, variableState);
+
+      return await client!.parseQuery(params, interpolatedOptions);
     },
   });
 }
@@ -47,6 +57,8 @@ export function useInstantQuery(
   enabled?: boolean
 ): UseQueryResult<MonitoredInstantQueryResponse, StatusError> {
   const { data: client } = useDatasourceClient<PrometheusClient>(datasource);
+  const datasourceStore = useDatasourceStore();
+  const variableState = useVariableValues();
 
   return useQuery<MonitoredInstantQueryResponse, StatusError>({
     enabled: !!client && enabled,
@@ -54,8 +66,15 @@ export function useInstantQuery(
     queryKey: ['instantQuery', content, 'datasource', datasource.kind],
     queryFn: async () => {
       const params: InstantQueryRequestParameters = { query: content };
+
+      // Get datasource spec and interpolate variables
+      const datasourceSpec = (await datasourceStore.getDatasource(
+        datasource
+      )) as DatasourceSpec<PrometheusDatasourceSpec>;
+      const interpolatedOptions = interpolateDatasourceProxyParams(datasourceSpec, variableState);
+
       const startTime = performance.now();
-      const response = await client!.instantQuery(params);
+      const response = await client!.instantQuery(params, interpolatedOptions);
       const responseTime = performance.now() - startTime;
 
       return { ...response, responseTime };
